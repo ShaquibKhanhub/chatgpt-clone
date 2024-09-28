@@ -1,9 +1,9 @@
-import React from 'react'
-
+import { Link } from "react-router-dom";
+import "./homepage.css";
 const Homepage = () => {
-  return (
-    <div>Homepage</div>
-  )
-}
+  return <div className="homepage">
+    <Link to={'/dashboard'}>Dashboard</Link>
+  </div>;
+};
 
-export default Homepage
+export default Homepage;
