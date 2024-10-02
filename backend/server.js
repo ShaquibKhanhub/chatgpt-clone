@@ -21,5 +21,5 @@ app.get("/api/upload", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("server is running");
+  console.log("server is running!");
 });
