@@ -1,8 +1,6 @@
-# dependencies
-node_modules
+# Inside the root .gitignore file
+# Ignore node_modules
+node_modules/
 
-
-
-# SECRET KEYS
+# Ignore .env file
 .env
-.vscode
