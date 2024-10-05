@@ -1,7 +1,15 @@
 import "./chatList.css";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 const ChatList = () => {
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["repoData"],
+    queryFn: () =>
+      fetch(`${import.meta.env.VITE_API_URL}/api/userchats`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+  });
   return (
     <div className="chatList">
       <span className="title">DASHBOARD</span>
@@ -11,19 +19,18 @@ const ChatList = () => {
       <hr />
       <span className="title">RECENT CHATS</span>
       <div className="list">
-        <Link to="/chat1">Chat 1</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
-        <Link to="/chat2">Chat 2</Link>
+        {" "}
+        {isLoading
+          ? "Loading..."
+          : error
+          ? "Something went wrong!"
+          : data?.length > 0 // Ensure data has content to map over
+          ? data.map((chat) => (
+              <Link key={chat._id} to={`/dashboard/chats/${chat._id}`}>
+               {chat.title}
+              </Link>
+            ))
+          : "No chats found!"}
       </div>
       <hr />
       <div className="upgrade">

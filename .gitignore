@@ -1,0 +1,6 @@
+# Inside the root .gitignore file
+# Ignore node_modules
+node_modules/
+
+# Ignore .env file
+.env

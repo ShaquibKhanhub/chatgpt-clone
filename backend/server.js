@@ -5,12 +5,18 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import Chat from "./models/chat.js";
 import UserChats from "./models/userChat.js";
+import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
 dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL, // Specify the exact origin
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
@@ -25,8 +31,15 @@ app.get("/api/upload", async (req, res) => {
   res.send(result);
 });
 
-app.post("/api/chats", async (req, res) => {
-  const { userId, text } = req.body;
+// app.get('/api/test',ClerkExpressRequireAuth(),(req,res)=>{
+// const userId =req.auth.userId
+// console.log(userId);
+//   res.send('Success!')
+// })
+
+app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
+  const userId = req.auth.userId;
+  const { text } = req.body;
 
   try {
     //create a new chat
@@ -73,6 +86,35 @@ app.post("/api/chats", async (req, res) => {
     console.log(error);
     res.status(500).send("Error creating chat!");
   }
+});
+
+app.get(`/api/userchats`, ClerkExpressRequireAuth(), async (req, res) => {
+  const userId = req.auth.userId;
+  try {
+    const userChats = await UserChats.find({ userId }); //find returns an array even if there's only one result instead of that use findOne it will not return an array
+
+    res.status(200).send(userChats[0].chats);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error fetching user user-chats!");
+  }
+});
+
+app.get(`/api/chats/:id`, ClerkExpressRequireAuth(), async (req, res) => {
+  const userId = req.auth.userId;
+  try {
+    const chat = await Chat.find({ _id: req.params.id, userId });
+
+    res.status(200).send(chat);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error fetching user chats!");
+  }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(401).send("Unauthenticated!");
 });
 
 app.listen(port, () => {
