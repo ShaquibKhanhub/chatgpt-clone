@@ -1,42 +1,40 @@
+import { Link } from "react-router-dom";
 import "./chatList.css";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 
 const ChatList = () => {
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["repoData"],
+  const { isPending, error, data } = useQuery({
+    queryKey: ["userChats"],
     queryFn: () =>
       fetch(`${import.meta.env.VITE_API_URL}/api/userchats`, {
         credentials: "include",
       }).then((res) => res.json()),
   });
+
   return (
     <div className="chatList">
       <span className="title">DASHBOARD</span>
-      <Link>Create a new Chat</Link>
-      <Link>Explore ChatBOT</Link>
-      <Link>Contact</Link>
+      <Link to="/dashboard">Create a new Chat</Link>
+      <Link to="/">Explore ChatBOT</Link>
+      <Link to="/">Contact</Link>
       <hr />
       <span className="title">RECENT CHATS</span>
       <div className="list">
-        {" "}
-        {isLoading
+        {isPending
           ? "Loading..."
           : error
           ? "Something went wrong!"
-          : data?.length > 0 // Ensure data has content to map over
-          ? data.map((chat) => (
-              <Link key={chat._id} to={`/dashboard/chats/${chat._id}`}>
-               {chat.title}
+          : data?.map((chat) => (
+              <Link to={`/dashboard/chats/${chat._id}`} key={chat._id}>
+                {chat.title}
               </Link>
-            ))
-          : "No chats found!"}
+            ))}
       </div>
       <hr />
       <div className="upgrade">
-        <img src="/logo.png" alt="logo" />
+        <img src="/logo.png" alt="" />
         <div className="texts">
-          <span>Upgrade to ChatBOT Pro</span>
+          <span>Upgrade to Lama AI Pro</span>
           <span>Get unlimited access to all features</span>
         </div>
       </div>
